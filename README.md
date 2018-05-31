@@ -1,8 +1,8 @@
 # Flask-AWS-weibo
 ##Functions:
-follow/unfollow \n
-star \n
-using machine learning to recommand posts \n
-search user \n
-post pictures
+1. follow/unfollow 
+2. star 
+3. using machine learning to recommand posts 
+4. search user 
+5. post pictures
 
