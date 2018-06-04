@@ -1,0 +1,28 @@
+{% extends "auth/settings_base.html" %}
+{% block middle_form %}
+    <div class="panel panel-default">
+        <div class="panel-heading font-bold">Change Profile</div>
+        <div class="panel-body">
+            <form role="form" method="post">
+                {{ form.hidden_tag() }}
+                <div class="form-group">
+                    <p>Username</p>
+                    {{ render_field(form.username, class="form-control") }}
+                </div>
+                <div class="form-group">
+                    <p>Real Name</p>
+                    {{ render_field(form.real_name,class="form-control") }}
+                </div>
+                <div class="form-group">
+                    <p>Location</p>
+                    {{ render_field(form.location,class="form-control") }}
+                </div>
+                <div class="form-group">
+                    <p>Introdution</p>
+                    {{ render_field(form.about_me,class="form-control") }}
+                </div>
+                {{ render_field(form.submit, class="btn btn-sm btn-primary") }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

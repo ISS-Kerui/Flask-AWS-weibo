@@ -1,0 +1,81 @@
+
+<!DOCTYPE html>
+<html>
+{% from "_formhelpers.html" import render_field %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NUSChat Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/login.css') }}">
+    <!-- 图标 -->
+    <link rel="shortcut icon" href="{{ url_for('static', filename = 'img/weibo.png') }}" type="image/x-icon">
+    <link rel="icon" href="{{ url_for('static', filename = 'img/weibo.png') }}" type="image/x-icon">
+</head>
+<body>
+
+<div class="index-main">
+    <div class="index-main-body">
+        <!-- logo -->
+        <div class="index-header">
+            <h1 class="logo"></h1>
+            <h2 class="subtitle">NusChat Web based on Python-Flask</h2>
+        </div>
+        <!-- 登陆注册框 -->
+        <div class="sign-flow">
+            <!-- 登陆注册logo -->
+            <div class="sign-nav" data-index="0">
+                <div class="nav-slider" style="display: inline-block; position: relative">
+                    <a href="{{ url_for('auth.login') }}" >Login</a>
+                    <a href="{{ url_for('auth.register') }}" >Sign Up</a>
+                    <span class="nav-slider-bar"></span>
+                </div>
+            </div>
+            {% for message in get_flashed_messages() %}
+                <div class="alert alert-warning">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    {{ message }}
+                </div>
+            {% endfor %}
+            <!-- 登陆 -->
+            <div class="sign-login" style="display: block">
+
+                <form method="post" novalidate="novalidate">
+                    {{ login_form.hidden_tag() }}
+
+                    <div class="input-wrapper">
+                        {{ render_field(login_form.email,placeholder="emaill adreess") }}
+                        {{ render_field(login_form.password ,placeholder="password") }}
+                    </div>
+
+                    <div class="button-wrapper">
+                        {{ render_field(login_form.submit, class="sign-btn") }}
+
+                    </div>
+                    <div class="signin-misc-wrapper clearFix">
+                        <div class="remember-me">
+                            {{ login_form.remember_me() }}{{ login_form.remember_me.label() }}
+                        </div>
+                        <a href="{{ url_for('auth.reset_password_request') }}" class="unable-login">Forget password？</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 底部 -->
+<div class="footer">
+    <span>@2018 NUSchat</span>
+    <span class="dot">·</span>
+    <a target="_blank" href="{{ url_for('main.index') }}">Home Page</a>
+    <span class="dot">·</span>
+    <a target="_blank" href="https://github.com/ISS-Kerui">Contact Us</a>
+</div>
+
+<canvas id="canvas" style="position: absolute; top: 0; left: 0; z-index: -1"></canvas>
+<script type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
+<script src="{{ url_for('static', filename='js/canvas.js') }}"></script>
+</body>
+</html>

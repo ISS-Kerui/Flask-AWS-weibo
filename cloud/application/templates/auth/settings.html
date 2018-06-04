@@ -1,0 +1,7 @@
+{% extends "auth/settings_base.html" %}
+{% block middle_form %}
+    <p style="font-family:  'New York';font-size: 20px;">Real Name: {{ current_user.real_name }}</p>
+    <p style="font-family: 'New York';font-size: 20px;">Location: {{ current_user.location }}</p>
+    <p style="font-family: 'New York';font-size: 20px;">Register time: {{ current_user.member_since }}</p>
+    <p style="font-family: 'New York';font-size: 20px;">Introduction: {{ current_user.about_me }}</p>
+{% endblock %}

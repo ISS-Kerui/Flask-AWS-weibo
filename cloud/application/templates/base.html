@@ -1,0 +1,168 @@
+{% extends "bootstrap/base.html" %}
+{% from "_formhelpers.html" import render_field %}
+{% from "_paginations.html" import pagination_widget %}
+{% block head %}
+    <title>{% block title %}
+        nuschat-Find News anywhere, anytime
+    {% endblock %}</title>
+
+    {% block metas %}
+        <meta charset="utf-8">
+        <meta name="description" content="NUSchat">
+        <meta name="author" content="Zhang Kerui(e0267487@u.nus.edu)">
+    {% endblock %}
+
+    {% block styles %}
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}" type="text/css" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/animate.css') }}" type="text/css" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/font-awesome.min.css') }}" type="text/css" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/simple-line-icons.css') }}" type="text/css" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/font.css') }}" type="text/css" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}" type="text/css" />
+    {% endblock %}
+
+    <link rel="shortcut icon" href="{{ url_for('static', filename = 'img/weibo.png') }}" type="image/x-icon">
+    <link rel="icon" href="{{ url_for('static', filename = 'img/weibo.png') }}" type="image/x-icon">
+
+{% endblock %}
+
+{% block body %}
+    <canvas id="canvas"></canvas>
+    {% block navbar %}
+        <div class="app-header navbar navbar-fixed-top">
+            <div class="container-fluid">
+                <!-- navbar collapse -->
+                <div class="collapse pos-rlt navbar-collapse box-shadow bg-white-only">
+                    
+                    <!-- search form -->
+                    <form action="/search" class="navbar-form navbar-form-sm navbar-left shift" ui-shift="prependTo" data-target=".navbar-collapse" role="search" ng-controller="TypeaheadDemoCtrl" method="post">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <input type="text" ng-model="selected"class="form-control input-sm bg-light no-border rounded padder" placeholder="find friends..." name="username">
+                                <span class="input-group-btn">
+                				<button type="submit" class="btn btn-sm bg-light rounded"><i class="fa fa-search"></i></button>
+              				</span>
+                            </div>
+                        </div>
+                    </form>
+                    <!-- / search form -->
+                    <!-- navbar right -->
+                    <ul class="nav navbar-nav navbar-right">
+                        <!-- 消息通知 -->
+                        {% if current_user.is_authenticated %}
+                            <li class="dropdown">
+                                <a href="#" data-toggle="dropdown" class="dropdown-toggle">
+                                    <i class="icon-bell fa-fw"></i>
+                                    <span class="visible-xs-inline">Notifications</span>
+                                    <span class="badge badge-sm up bg-danger pull-right-xs">2</span>
+                                </a>
+                                <div class="dropdown-menu w-xl animated fadeInUp">
+                                    <div class="panel bg-white">
+                                        <div class="panel-heading b-light bg-light">
+                                            <strong>You have <span>2</span> notifications</strong>
+                                        </div>
+                                        <div class="list-group">
+                                            <a href class="media list-group-item">
+                    					<span class="pull-left thumb-sm">
+                                            {% if current_user.avatar %}
+                                <img src="../static/img/avatar/{{ current_user.avatar }}" class="img-circle" alt="...">
+                                {% else %}
+                                    <img src="../static/img/avatar/avatar.jpg" class="img-circle" alt="...">
+                                {% endif %}
+
+
+                    					</span>
+                                                <span class="media-body block m-b-none">Use awesome animate.css<br>
+                      						<small class="text-muted">10 minutes ago</small>
+                    					</span>
+                                            </a>
+                                            <a href class="media list-group-item">
+                    					<span class="media-body block m-b-none">1.0 initial released<br>
+                      						<small class="text-muted">1 hour ago</small>
+                    					</span>
+                                            </a>
+                                        </div>
+                                        <div class="panel-footer text-sm">
+                                            <a href class="pull-right"><i class="fa fa-cog"></i></a>
+                                            <a href="#notes" data-toggle="class:show animated fadeInRight">See all the notifications</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <!-- 账户 -->
+                            <li class="dropdown">
+                                <a href="#" data-toggle="dropdown" class="dropdown-toggle clear" data-toggle="dropdown">
+              				<span class="thumb-sm avatar pull-right m-t-n-sm m-b-n-sm m-l-sm">
+                			{% if current_user.avatar %}
+                                <img src="../static/img/avatar/{{ current_user.avatar }}" class="img-circle" alt="...">
+                                {% else %}
+                                    <img src="../static/img/avatar/avatar.jpg" class="img-circle" alt="...">
+                                {% endif %}
+                                <i class="on md b-white bottom"></i>
+              				</span>
+                                    <span class="hidden-sm hidden-md">{{ current_user.username }}</span> <b class="caret"></b>
+                                </a>
+                                <ul class="dropdown-menu animated fadeInRight w">
+                                    <li class="wrapper b-b m-b-sm bg-light m-t-n-xs">
+                                        <div><p>300mb of 500mb used</p></div>
+                                        <progressbar value="60" class="progress-xs m-b-none bg-white"></progressbar>
+                                    </li>
+                                    <li><a href="{{ url_for('auth.settings') }}">
+                                        <span>Settings</span>
+                                    </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ url_for('main.users', username=current_user.username) }}" ui-sref="app.page.profile">Profile</a>
+                                    </li>
+                                    <li>
+                                        <a ui-sref="app.docs">
+                                            <span class="label bg-info pull-right">new</span>Help
+                                        </a>
+                                    </li>
+                                    <li class="divider"></li>
+                                    <li>
+                                        <a ui-sref="access.signin" href="{{ url_for('auth.logout') }}">Logout</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li><a> </a></li>
+                        {% else %}
+                            <li><a href="{{ url_for('auth.login') }}">Login</a> </li>
+                            <li><a href="{{ url_for('auth.register') }}">Sign Up</a> </li>
+                            <li><a> </a></li>
+                        {% endif %}
+                    </ul>
+                    <!-- / navbar right -->
+                </div>
+                <!-- / navbar collapse -->
+            </div>
+        </div>
+    {% endblock navbar%}
+
+    {% block content %}
+        <div class="container main-page">
+            {% for message in get_flashed_messages() %}
+                <div class="alert alert-warning">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    {{ message }}
+                </div>
+            {% endfor %}
+            <div class="hbox hbox-auto-xs hbox-auto-sm">
+                <!-- 左边内容主页面 -->
+                {% block page_content %}
+                {% endblock %}
+               
+            </div>
+        </div>
+    {% endblock %}
+
+    {% block scripts %}
+        <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/canvas.js') }}"></script>
+        <!-- <script src="{{ url_for('static', filename='js/comment.js') }}"></script> -->
+        {{ moment.include_moment(local_js='../static/js/moment.js') }}
+    {% endblock %}
+{% endblock %}
+
+

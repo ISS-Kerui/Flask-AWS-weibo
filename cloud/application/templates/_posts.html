@@ -1,0 +1,127 @@
+
+<ul class="posts">
+    {% for post in posts %}
+        <li>
+            <!-- 头像 -->
+            <a class="pull-left thumb-sm avatar m-l-n-md" href="{{ url_for('main.users', username=post.author.username) }}">
+                <img src="../static/img/avatar/{{ post.author.avatar }}" class="img-circle" alt="...">
+            </a>
+            <div class="m-l-lg">
+                <!-- 昵称和发表时间 -->
+                <div class="m-b-xs">
+                    <a href="{{ url_for('main.users', username=post.author.username) }}" class="h4">{{ post.author.username }}</a>
+                    <span class="text-muted m-l-sm pull-right"> {{ moment( post.timestamp).fromNow() }}</span>
+                </div>
+                <!-- 微博内容 -->
+                <div class="m-b">
+                    <p>{{ post.body }}</p>
+                     <img src="{{ url_for('static',filename=post.photos_t)}}" class="b b-a wrapper-xs bg-white img-responsive small_img" onclick="document.getElementById('light_{{post.id}}').style.display ='block';document.getElementById('fade_{{post.id}}').style.display='block'"/>
+                    <img id="light_{{post.id}}" src="{{ url_for('static',filename=post.photos)}}" class="b b-a wrapper-xs bg-white img-responsive big_img" onclick = "document.getElementById('light_{{post.id}}').style.display ='none' ;document.getElementById('fade_{{post.id}}').style.display='none'"/>
+                    <div id="fade_{{post.id}}" class="black_overlay">
+                        
+                    </div>  
+                    <!-- 工具条 -->
+                    <div class="m-t-sm" data-post-id={{ post.id }}>
+                        <a  class="text-muted m-xs"><i class="icon-action-redo retweet">Share</i></a>
+
+                        <a  class="toggle-comment meta-item text-muted m-xs approve-count" ><i class="glyphicon glyphicon-thumbs-up"></i></a>
+                        <a  class="toggle-comment meta-item text-muted m-xs approve-count" ><i class="icon-heart"></i> {{post.approve_count}} likes</a>
+                        <a href="{{ url_for('main.post', id=post.id) }}" class="text-muted m-xs" ><i class="glyphicon glyphicon-comment"></i> all comments</a>
+                    </div>
+                </div>
+            </div>
+            <!-- 评论 -->
+            <div class="m-l-lg" id="comment-block" class="comment-app-holder" style="display: none">
+                <div class="_commentBox-list">
+                {% include "_comments.html" %}
+
+                </div>
+
+
+
+
+            </div>
+        </li>
+    {% endfor %}
+    <!-- 带图片的微博 -->
+    
+</ul>
+{% block scripts %}
+<script src="{{url_for('static', filename='../static/js/jquery.min.js')}}"></script>  
+<style>   
+
+  .small_img,.big_img {  
+    cursor: pointer;  
+  }   
+  .black_overlay{   
+    display: none;   
+    position: absolute;   
+    width: 500px;   
+    height: 350px;   
+    background-color: black;   
+    z-index:1001;   
+    -moz-opacity: 0.8;   
+    opacity:.80;   
+    filter: alpha(opacity=80);    
+  }   
+  .big_img {   
+    display: none;   
+    position: absolute;   
+    margin: -60px 0px 0px -60px;  
+    z-index:1002;   
+    overflow: auto;   
+  }  
+  </style>   
+<script >
+    $('.retweet').click(function(event) {
+        var p = $(event.target).closest("div");
+        var post_id = p.attr("data-post-id");
+        $.ajax({
+        url : "/post/" + post_id + "/retweet",
+        type: "POST",
+        data : {"t_id": post_id},
+        success: function(data, textStatus, jqXHR)
+        {   
+            location.reload(true);
+            }
+
+        });
+});
+</script>
+<script>
+$('.glyphicon-thumbs-up').click(function(event) {
+        
+        var p = $(event.target).closest("div");
+        var post_id = p.attr("data-post-id");
+        $.ajax({
+        url : "/post/" + post_id + "/approve",
+        type: "POST",
+        dataType:"json",
+        data : {"target_id": post_id},
+        success: function(data, textStatus, jqXHR)
+        {   
+            if (data.rs == 1) {
+                
+                var element = p.find(".glyphicon-thumbs-up");
+                element.removeClass("glyphicon glyphicon-thumbs-up");
+                element.addClass("glyphicon glyphicon-thumbs-down");
+
+
+            }
+            else{
+               
+                var element = p.find(".glyphicon-thumbs-down");
+                element.removeClass("glyphicon glyphicon-thumbs-down");
+                element.addClass("glyphicon glyphicon-thumbs-up");
+
+            }
+            location.reload(true);
+
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {            
+           alert("dddd");
+        }  
+        });
+});
+</script>
+{% endblock %}
